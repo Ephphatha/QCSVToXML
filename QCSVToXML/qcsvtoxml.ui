@@ -1,29 +1,223 @@
-<UI version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>QCSVToXMLClass</class>
- <widget class="QMainWindow" name="QCSVToXMLClass" >
-  <property name="objectName" >
-   <string notr="true">QCSVToXMLClass</string>
-  </property>
-  <property name="geometry" >
+ <widget class="QMainWindow" name="QCSVToXMLClass">
+  <property name="geometry">
    <rect>
-	<x>0</x>
-	<y>0</y>
-	<width>600</width>
-	<height>400</height>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>400</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>QCSVToXML</string>
   </property>
-  <widget class="QMenuBar" name="menuBar" />
-  <widget class="QToolBar" name="mainToolBar" />
-  <widget class="QWidget" name="centralWidget" />
-  <widget class="QStatusBar" name="statusBar" />
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QScrollArea" name="scrollArea">
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>286</width>
+         <height>339</height>
+        </rect>
+       </property>
+       <layout class="QFormLayout" name="formLayout">
+        <property name="labelAlignment">
+         <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+        </property>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="lineEditNamespace"/>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="lineEditWrapper"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="labelNamespaceUri">
+          <property name="text">
+           <string>Namespace URI:</string>
+          </property>
+          <property name="buddy">
+           <cstring>lineEdit</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="lineEdit"/>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="labelElement">
+          <property name="text">
+           <string>Element Name:</string>
+          </property>
+          <property name="buddy">
+           <cstring>lineEditElement</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="lineEditElement"/>
+        </item>
+        <item row="6" column="0" colspan="2">
+         <widget class="QGroupBox" name="groupBoxAttributes">
+          <property name="title">
+           <string>Attributes</string>
+          </property>
+          <layout class="QFormLayout" name="formLayoutGroupBoxAttributes">
+           <property name="fieldGrowthPolicy">
+            <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+           </property>
+          </layout>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="labelWrapper">
+          <property name="toolTip">
+           <string>Leave blank if not required</string>
+          </property>
+          <property name="text">
+           <string>Wrapper:</string>
+          </property>
+          <property name="buddy">
+           <cstring>lineEditWrapper</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="labelNamespacePrefix">
+          <property name="text">
+           <string>Namespace Prefix:</string>
+          </property>
+          <property name="buddy">
+           <cstring>lineEditNamespace</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0" colspan="2">
+         <widget class="QCheckBox" name="checkBoxAttributeAsElement">
+          <property name="text">
+           <string>Write attributes as XML elements</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0" colspan="2">
+         <widget class="QCheckBox" name="checkBoxFirstRowAsAttributes">
+          <property name="text">
+           <string>Use first row as attribute names</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTextBrowser" name="textBrowserXmlOutput"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>600</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionLoad"/>
+    <addaction name="actionExport"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <addaction name="menuFile"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionLoad">
+   <property name="icon">
+    <iconset theme="document-open">
+     <normaloff/>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Load</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+L</string>
+   </property>
+  </action>
+  <action name="actionExport">
+   <property name="icon">
+    <iconset theme="document-save">
+     <normaloff/>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Export</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+E</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="icon">
+    <iconset theme="window-close">
+     <normaloff/>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Exit</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+X</string>
+   </property>
+  </action>
  </widget>
- <layoutDefault spacing="6" margin="11" />
- <pixmapfunction></pixmapfunction>
+ <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>lineEditNamespace</tabstop>
+  <tabstop>lineEdit</tabstop>
+  <tabstop>lineEditWrapper</tabstop>
+  <tabstop>lineEditElement</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>textBrowserXmlOutput</tabstop>
+ </tabstops>
  <resources>
-   <include location="qcsvtoxml.qrc"/>
+  <include location="qcsvtoxml.qrc"/>
  </resources>
- <connections/>
-</UI>
+ <connections>
+  <connection>
+   <sender>actionExit</sender>
+   <signal>triggered()</signal>
+   <receiver>QCSVToXMLClass</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>299</x>
+     <y>199</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
