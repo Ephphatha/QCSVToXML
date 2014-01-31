@@ -7,6 +7,8 @@
 #include <vector>
 #include <QSettings>
 
+class QXmlStreamWriter;
+
 class QCSVToXML : public QMainWindow
 {
 	Q_OBJECT
@@ -33,6 +35,8 @@ protected slots:
 	void refreshXmlPreview();
 
 private:
+	void writeXml(QXmlStreamWriter &writer, bool preview = false);
+
 	Ui::QCSVToXMLClass ui;
 
 	std::vector<QLineEdit *> fieldLineEdits;

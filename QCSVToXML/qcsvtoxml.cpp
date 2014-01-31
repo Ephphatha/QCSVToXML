@@ -18,10 +18,13 @@ QCSVToXML::QCSVToXML(QWidget *parent)
 	connect(this->ui.lineEditNamespace, &QLineEdit::textChanged, this, &QCSVToXML::refreshXmlPreview);
 	connect(this->ui.lineEditNamespaceUri, &QLineEdit::textChanged, this, &QCSVToXML::refreshXmlPreview);
 	connect(this->ui.lineEditRoot, &QLineEdit::textChanged, this, &QCSVToXML::refreshXmlPreview);
+	connect(this->ui.lineEditWrapper, &QLineEdit::textChanged, this, &QCSVToXML::refreshXmlPreview);
 
 	connect(this->ui.checkBoxAttributeAsElement, &QCheckBox::toggled, this, &QCSVToXML::refreshXmlPreview);
 	connect(this->ui.checkBoxFirstRowAsAttributes, &QCheckBox::toggled, this, &QCSVToXML::refreshXmlPreview);
 	connect(this->ui.checkBoxFirstRowAsAttributes, &QCheckBox::toggled, this, &QCSVToXML::prefillAttributeLineEdits);
+	connect(this->ui.checkBoxSkipFirstRow, &QCheckBox::toggled, this, &QCSVToXML::refreshXmlPreview);
+	connect(this->ui.checkBoxSuppressEmptyAttributes, &QCheckBox::toggled, this, &QCSVToXML::refreshXmlPreview);
 }
 
 QCSVToXML::~QCSVToXML()
@@ -129,6 +132,14 @@ void QCSVToXML::save(const QString &filename)
 	QFileInfo fileInfo(file);
 
 	this->settings.setValue("workingDirectory", fileInfo.absolutePath());
+
+	if (!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
+		return;
+	}
+
+	QXmlStreamWriter writer(&file);
+
+	this->writeXml(writer);
 }
 
 void QCSVToXML::populateAttributeGroupBox()
@@ -184,29 +195,56 @@ void QCSVToXML::refreshXmlPreview()
 
 	QXmlStreamWriter writer(&xml);
 
+	this->writeXml(writer, true);
+
+	this->ui.textBrowserXmlOutput->setText(xml);
+}
+
+void QCSVToXML::writeXml(QXmlStreamWriter &writer, bool preview)
+{
 	writer.setAutoFormatting(true);
 
 	writer.writeStartDocument();
 
-	writer.writeStartElement(this->ui.lineEditRoot->text().replace(' ', '_'));
-
-	writer.writeStartElement(this->ui.lineEditElement->text().replace(' ', '_'));
-
-	int dataRow = (this->ui.checkBoxFirstRowAsAttributes->isChecked() && this->csvContents.size() > 1) ? 1 : 0;
-
-	for (int i = 0; i < std::min(this->csvContents[dataRow].size(), this->csvContents[0].size()); ++i) {
-		if (this->ui.checkBoxAttributeAsElement->isChecked()) {
-			writer.writeTextElement(this->fieldLineEdits[i]->text().replace(' ', '_'), this->csvContents[dataRow][i]);
+	if (!this->ui.lineEditNamespaceUri->text().isEmpty()) {
+		if (this->ui.lineEditNamespace->text().isEmpty()) {
+			writer.writeDefaultNamespace(this->ui.lineEditNamespaceUri->text());
 		} else {
-			writer.writeAttribute(this->ui.lineEditNamespaceUri->text().replace(' ', '_'), this->fieldLineEdits[i]->text().replace(' ', '_'), this->csvContents[dataRow][i]);
+			writer.writeNamespace(this->ui.lineEditNamespaceUri->text(), this->ui.lineEditNamespace->text());
 		}
+	}
+
+	writer.writeStartElement(this->ui.lineEditNamespaceUri->text(), this->ui.lineEditRoot->text().replace(' ', '_'));
+
+	if (!this->ui.lineEditWrapper->text().isEmpty()) {
+		writer.writeStartElement(this->ui.lineEditNamespaceUri->text(), this->ui.lineEditWrapper->text().replace(' ', '_'));
+	}
+
+	for (int i = this->ui.checkBoxSkipFirstRow->isChecked() ? 1 : 0; i < this->csvContents.size(); ++i) {
+		writer.writeStartElement(this->ui.lineEditNamespaceUri->text(), this->ui.lineEditElement->text().replace(' ', '_'));
+
+		for (int j = 0; j < std::min(this->csvContents[i].size(), this->csvContents[0].size()); ++j) {
+			if (!this->ui.checkBoxSuppressEmptyAttributes->isChecked() || !this->csvContents[i][j].isEmpty()) {
+				if (this->ui.checkBoxAttributeAsElement->isChecked()) {
+					writer.writeTextElement(this->ui.lineEditNamespaceUri->text(), this->fieldLineEdits[j]->text().replace(' ', '_'), this->csvContents[i][j]);
+				} else {
+					writer.writeAttribute(this->ui.lineEditNamespaceUri->text(), this->fieldLineEdits[j]->text().replace(' ', '_'), this->csvContents[i][j]);
+				}
+			}
+		}
+
+		writer.writeEndElement();
+
+		if (preview) {
+			break;
+		}
+	}
+
+	if (!this->ui.lineEditWrapper->text().isEmpty()) {
+		writer.writeEndElement();
 	}
 
 	writer.writeEndElement();
 
-	writer.writeEndElement();
-
 	writer.writeEndDocument();
-
-	this->ui.textBrowserXmlOutput->setText(xml);
 }

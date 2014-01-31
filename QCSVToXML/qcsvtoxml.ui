@@ -33,6 +33,9 @@
         <item>
          <widget class="QWidget" name="widgetDocProperties" native="true">
           <layout class="QFormLayout" name="formLayout">
+           <property name="fieldGrowthPolicy">
+            <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+           </property>
            <item row="1" column="0">
             <widget class="QLabel" name="labelNamespacePrefix">
              <property name="text">
@@ -76,6 +79,16 @@
             <widget class="QLineEdit" name="lineEditRoot"/>
            </item>
            <item row="4" column="0">
+            <widget class="QLabel" name="labelWrapper">
+             <property name="text">
+              <string>Wrapper:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="lineEditWrapper"/>
+           </item>
+           <item row="5" column="0">
             <widget class="QLabel" name="labelElement">
              <property name="text">
               <string>Element Name:</string>
@@ -85,7 +98,7 @@
              </property>
             </widget>
            </item>
-           <item row="4" column="1">
+           <item row="5" column="1">
             <widget class="QLineEdit" name="lineEditElement"/>
            </item>
           </layout>
@@ -114,6 +127,26 @@
              </property>
              <property name="checked">
               <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxSkipFirstRow">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>Skip first row</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxSuppressEmptyAttributes">
+             <property name="text">
+              <string>Don't write empty attributes</string>
              </property>
             </widget>
            </item>
@@ -216,6 +249,14 @@
  <tabstops>
   <tabstop>scrollArea</tabstop>
   <tabstop>textBrowserXmlOutput</tabstop>
+  <tabstop>lineEditNamespace</tabstop>
+  <tabstop>lineEditNamespaceUri</tabstop>
+  <tabstop>lineEditRoot</tabstop>
+  <tabstop>lineEditWrapper</tabstop>
+  <tabstop>lineEditElement</tabstop>
+  <tabstop>checkBoxAttributeAsElement</tabstop>
+  <tabstop>checkBoxFirstRowAsAttributes</tabstop>
+  <tabstop>checkBoxSkipFirstRow</tabstop>
  </tabstops>
  <resources>
   <include location="qcsvtoxml.qrc"/>
@@ -234,6 +275,38 @@
     <hint type="destinationlabel">
      <x>299</x>
      <y>199</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxFirstRowAsAttributes</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>checkBoxSkipFirstRow</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>152</x>
+     <y>248</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>152</x>
+     <y>271</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxFirstRowAsAttributes</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>checkBoxSkipFirstRow</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>152</x>
+     <y>248</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>152</x>
+     <y>271</y>
     </hint>
    </hints>
   </connection>
