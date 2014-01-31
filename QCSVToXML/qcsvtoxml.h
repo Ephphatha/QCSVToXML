@@ -29,6 +29,7 @@ protected:
 
 protected slots:
 	void populateAttributeGroupBox();
+	void prefillAttributeLineEdits();
 	void refreshXmlPreview();
 
 private:

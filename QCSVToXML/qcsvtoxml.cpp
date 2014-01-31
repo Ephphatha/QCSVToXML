@@ -21,6 +21,7 @@ QCSVToXML::QCSVToXML(QWidget *parent)
 
 	connect(this->ui.checkBoxAttributeAsElement, &QCheckBox::toggled, this, &QCSVToXML::refreshXmlPreview);
 	connect(this->ui.checkBoxFirstRowAsAttributes, &QCheckBox::toggled, this, &QCSVToXML::refreshXmlPreview);
+	connect(this->ui.checkBoxFirstRowAsAttributes, &QCheckBox::toggled, this, &QCSVToXML::prefillAttributeLineEdits);
 }
 
 QCSVToXML::~QCSVToXML()
@@ -133,9 +134,16 @@ void QCSVToXML::save(const QString &filename)
 void QCSVToXML::populateAttributeGroupBox()
 {
 	if (this->csvContents.empty() || this->csvContents[0].size() < this->ui.formLayoutWidgetAttributes->rowCount()) {
+		for (int i = 0; i < this->fieldLineEdits.size(); ++i) {
+			disconnect(this->fieldLineEdits[i], &QLineEdit::textChanged, this, &QCSVToXML::refreshXmlPreview);
+			disconnect(this->ui.checkBoxFirstRowAsAttributes, &QCheckBox::toggled, this->fieldLineEdits[i], &QLineEdit::setDisabled);
+		}
+
 		this->fieldLineEdits.clear();
+
 		this->ui.verticalLayoutGroupBoxAttributes->removeWidget(this->ui.widgetAttributes);
 		delete this->ui.widgetAttributes;
+
 		this->ui.widgetAttributes = new QWidget(this->ui.groupBoxAttributes);
 		this->ui.formLayoutWidgetAttributes = new QFormLayout(this->ui.widgetAttributes);
 		this->ui.verticalLayoutGroupBoxAttributes->addWidget(this->ui.widgetAttributes);
@@ -144,14 +152,24 @@ void QCSVToXML::populateAttributeGroupBox()
 	for (int i = this->ui.formLayoutWidgetAttributes->rowCount(); i < this->csvContents[0].size(); ++i) {
 		QLineEdit *lineEdit = new QLineEdit(this->ui.widgetAttributes);
 
-		if (this->ui.checkBoxFirstRowAsAttributes->isChecked()) {
-			lineEdit->setText(this->csvContents[0][i]);
-		} else {
-			lineEdit->setText(QString("Attribute %1").arg(QString::number(i)));
-		}
-
+		connect(lineEdit, &QLineEdit::textChanged, this, &QCSVToXML::refreshXmlPreview);
+		connect(this->ui.checkBoxFirstRowAsAttributes, &QCheckBox::toggled, lineEdit, &QLineEdit::setDisabled);
+		lineEdit->setEnabled(!this->ui.checkBoxFirstRowAsAttributes->isChecked());
 		this->fieldLineEdits.push_back(lineEdit);
 		this->ui.formLayoutWidgetAttributes->addRow(QString("Field %1:").arg(QString::number(i)), lineEdit);
+	}
+
+	this->prefillAttributeLineEdits();
+}
+
+void QCSVToXML::prefillAttributeLineEdits()
+{
+	for (int i = 0; i < this->fieldLineEdits.size(); ++i) {
+		if (this->ui.checkBoxFirstRowAsAttributes->isChecked() && !this->csvContents.empty() && i < this->csvContents[0].size()) {
+			this->fieldLineEdits[i]->setText(this->csvContents[0][i]);
+		} else if (this->fieldLineEdits[i]->text().isEmpty()) {
+			this->fieldLineEdits[i]->setText(QString("Attribute %1").arg(QString::number(i)));
+		}
 	}
 }
 
