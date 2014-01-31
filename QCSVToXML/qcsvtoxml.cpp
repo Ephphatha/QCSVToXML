@@ -67,6 +67,9 @@ void QCSVToXML::load(const QString &filename)
 
 	this->csvContents.clear();
 
+	this->ui.lineEditElement->setText(fileInfo.baseName());
+	this->ui.lineEditRoot->setText(fileInfo.baseName() + "s");
+
 	QTextStream in(&file);
 
 	while (!in.atEnd()) {
@@ -154,13 +157,25 @@ void QCSVToXML::refreshXmlPreview()
 	writer.setAutoFormatting(true);
 
 	writer.writeStartDocument();
-	writer.writeStartElement("element");
 
-	for (int i = 0; i < this->csvContents[0].size(); ++i) {
-		writer.writeTextElement(QString("Attribute %1").arg(QString::number(i)), this->csvContents[0][i]);
+	writer.writeStartElement(this->ui.lineEditRoot->text().replace(' ', '_'));
+
+	writer.writeStartElement(this->ui.lineEditElement->text().replace(' ', '_'));
+
+	int dataRow = (this->ui.checkBoxFirstRowAsAttributes->isChecked() && this->csvContents.size() > 1) ? 1 : 0;
+
+	for (int i = 0; i < std::min(this->csvContents[dataRow].size(), this->csvContents[0].size()); ++i) {
+		if (this->ui.checkBoxAttributeAsElement->isChecked()) {
+			writer.writeTextElement(this->fieldLineEdits[i]->text().replace(' ', '_'), this->csvContents[dataRow][i]);
+		} else {
+			writer.writeAttribute(this->ui.lineEditNamespaceUri->text().replace(' ', '_'), this->fieldLineEdits[i]->text(), this->csvContents[dataRow][i]);
+		}
 	}
 
 	writer.writeEndElement();
+
+	writer.writeEndElement();
+
 	writer.writeEndDocument();
 
 	this->ui.textBrowserXmlOutput->setText(xml);
