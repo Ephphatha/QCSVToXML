@@ -33,6 +33,8 @@ protected slots:
 
 private:
 	Ui::QCSVToXMLClass ui;
+
+	std::vector<QLineEdit *> fieldLineEdits;
 };
 
 #endif // QCSVTOXML_H
