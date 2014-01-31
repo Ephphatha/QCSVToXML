@@ -9,8 +9,16 @@ QCSVToXML::QCSVToXML(QWidget *parent)
 {
 	ui.setupUi(this);
 
-	connect(this->ui.actionLoad, SIGNAL(triggered()), SLOT(loadAction()));
-	connect(this->ui.actionExport, SIGNAL(triggered()), SLOT(saveAction()));
+	connect(this->ui.actionLoad, &QAction::triggered, this, &QCSVToXML::loadAction);
+	connect(this->ui.actionExport, &QAction::triggered, this, &QCSVToXML::saveAction);
+
+	connect(this->ui.lineEditElement, &QLineEdit::textChanged, this, &QCSVToXML::refreshXmlPreview);
+	connect(this->ui.lineEditNamespace, &QLineEdit::textChanged, this, &QCSVToXML::refreshXmlPreview);
+	connect(this->ui.lineEditNamespaceUri, &QLineEdit::textChanged, this, &QCSVToXML::refreshXmlPreview);
+	connect(this->ui.lineEditRoot, &QLineEdit::textChanged, this, &QCSVToXML::refreshXmlPreview);
+
+	connect(this->ui.checkBoxAttributeAsElement, &QCheckBox::toggled, this, &QCSVToXML::refreshXmlPreview);
+	connect(this->ui.checkBoxFirstRowAsAttributes, &QCheckBox::toggled, this, &QCSVToXML::refreshXmlPreview);
 }
 
 QCSVToXML::~QCSVToXML()
