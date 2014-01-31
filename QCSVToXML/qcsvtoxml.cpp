@@ -180,7 +180,7 @@ void QCSVToXML::refreshXmlPreview()
 		if (this->ui.checkBoxAttributeAsElement->isChecked()) {
 			writer.writeTextElement(this->fieldLineEdits[i]->text().replace(' ', '_'), this->csvContents[dataRow][i]);
 		} else {
-			writer.writeAttribute(this->ui.lineEditNamespaceUri->text().replace(' ', '_'), this->fieldLineEdits[i]->text(), this->csvContents[dataRow][i]);
+			writer.writeAttribute(this->ui.lineEditNamespaceUri->text().replace(' ', '_'), this->fieldLineEdits[i]->text().replace(' ', '_'), this->csvContents[dataRow][i]);
 		}
 	}
 
