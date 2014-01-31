@@ -119,18 +119,17 @@ void QCSVToXML::save(const QString &filename)
 
 void QCSVToXML::populateAttributeGroupBox()
 {
-	while (!this->ui.formLayoutGroupBoxAttributes->isEmpty()) {
-		QLayoutItem* item = this->ui.formLayoutGroupBoxAttributes->takeAt(0);
-		item->widget()->deleteLater();
-		delete item;
+	if (this->csvContents.empty() || this->csvContents[0].size() < this->ui.formLayoutWidgetAttributes->rowCount()) {
+		this->ui.verticalLayoutGroupBoxAttributes->removeWidget(this->ui.widgetAttributes);
+		delete this->ui.widgetAttributes;
+		this->ui.widgetAttributes = new QWidget(this->ui.groupBoxAttributes);
+		this->ui.formLayoutWidgetAttributes = new QFormLayout(this->ui.widgetAttributes);
+		this->ui.verticalLayoutGroupBoxAttributes->addWidget(this->ui.widgetAttributes);
 	}
 
-	for (int i = this->ui.formLayoutGroupBoxAttributes->rowCount(); i < this->csvContents[0].size(); ++i) {
-		this->ui.formLayoutGroupBoxAttributes->addRow(QString("Field %1").arg(QString::number(i)), new QLineEdit(this->ui.groupBoxAttributes));
+	for (int i = this->ui.formLayoutWidgetAttributes->rowCount(); i < this->csvContents[0].size(); ++i) {
+		this->ui.formLayoutWidgetAttributes->addRow(QString("Field %1").arg(QString::number(i)), new QLineEdit(this->ui.widgetAttributes));
 	}
-
-	//this->ui.formLayoutGroupBoxAttributes->update();
-	this->ui.groupBoxAttributes->updateGeometry();
 }
 
 void QCSVToXML::refreshXmlPreview()
