@@ -1,5 +1,7 @@
 #include "qcsvtoxml.h"
 
+#include <algorithm>
+
 #include <QFileDialog>
 #include <QTextStream>
 #include <QXmlStreamWriter>
@@ -131,6 +133,7 @@ void QCSVToXML::save(const QString &filename)
 void QCSVToXML::populateAttributeGroupBox()
 {
 	if (this->csvContents.empty() || this->csvContents[0].size() < this->ui.formLayoutWidgetAttributes->rowCount()) {
+		this->fieldLineEdits.clear();
 		this->ui.verticalLayoutGroupBoxAttributes->removeWidget(this->ui.widgetAttributes);
 		delete this->ui.widgetAttributes;
 		this->ui.widgetAttributes = new QWidget(this->ui.groupBoxAttributes);
@@ -139,7 +142,16 @@ void QCSVToXML::populateAttributeGroupBox()
 	}
 
 	for (int i = this->ui.formLayoutWidgetAttributes->rowCount(); i < this->csvContents[0].size(); ++i) {
-		this->ui.formLayoutWidgetAttributes->addRow(QString("Field %1").arg(QString::number(i)), new QLineEdit(this->ui.widgetAttributes));
+		QLineEdit *lineEdit = new QLineEdit(this->ui.widgetAttributes);
+
+		if (this->ui.checkBoxFirstRowAsAttributes->isChecked()) {
+			lineEdit->setText(this->csvContents[0][i]);
+		} else {
+			lineEdit->setText(QString("Attribute %1").arg(QString::number(i)));
+		}
+
+		this->fieldLineEdits.push_back(lineEdit);
+		this->ui.formLayoutWidgetAttributes->addRow(QString("Field %1:").arg(QString::number(i)), lineEdit);
 	}
 }
 
